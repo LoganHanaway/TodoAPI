@@ -10,6 +10,25 @@ app.config['SECRET_KEY'] = "oh-so-secret"
 
 connect_db(app)
 
+@app.cli.command("seed-db")
+def seed_db():
+    """Seed the database with initial data."""
+    with app.app_context():  # Make sure we're within the app context
+        db.drop_all()
+        db.create_all()
+
+        todos = [
+            Todo(title="Feed the Chickens"),
+            Todo(title="Water Orchids"),
+            Todo(title="Wash Dishes", done=True),
+            Todo(title="Workout Today!"),
+            Todo(title="No but really, workout today!", done=True),
+            Todo(title="Collect Eggs from chickens (steal their unborn babies)")
+        ]
+
+        db.session.add_all(todos)
+        db.session.commit()
+        print("Database seeded!")
 
 @app.route('/')
 def index_page():
